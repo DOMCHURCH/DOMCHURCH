@@ -57,7 +57,7 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 <table>
 <tr>
 <td align="center" valign="middle">
-<img src="assets/ascii-burn.svg" width="380" alt="ASCII portrait with a hole burning through it">
+<img src="assets/ascii-burn.svg?v=2" width="380" alt="ASCII portrait with a hole burning through it">
 </td>
 <td align="center" valign="middle">
 <picture>
