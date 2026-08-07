@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="assets/ascii-burn.svg" width="880" alt="ASCII portrait with a hole burning through it">
-
 ![header](https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:203a43,100:2c5364&height=200&section=header&text=Dominique%20Church&fontSize=58&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Solo%20founder%20%C2%B7%20shipping%20live%20products&descSize=18&descAlignY=60)
 
 [![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3200&pause=800&color=58A6FF&center=true&width=620&lines=Geopolitical+risk+%C2%B7+equity+research+%C2%B7+SEC+data;FastAPI+%C2%B7+React+%C2%B7+real+public+data%2C+no+paywalls;Eight+web+properties+live+in+production)](https://git.io/typing-svg)
@@ -56,10 +54,18 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 ---
 
 <div align="center">
-
-![stats](https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true)
-![langs](https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=tokyonight&hide_border=true&langs_count=8)
-
+<table>
+<tr>
+<td align="center" valign="middle">
+<img src="assets/ascii-burn.svg" width="420" alt="ASCII portrait with a hole burning through it">
+</td>
+<td align="center" valign="middle">
+<img src="https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" alt="stats">
+<br>
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=tokyonight&hide_border=true&langs_count=8" alt="langs">
+</td>
+</tr>
+</table>
 </div>
 
 ---
