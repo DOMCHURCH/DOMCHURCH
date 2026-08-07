@@ -57,7 +57,7 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 <table>
 <tr>
 <td align="center" valign="middle">
-<a href="https://domchurch.github.io/DOMCHURCH/" title="Open the interactive version — the hole follows your cursor"><img src="assets/ascii-burn.svg?v=3" width="380" alt="ASCII portrait with a hole burning through it"></a>
+<a href="https://domchurch.github.io/DOMCHURCH/" title="Open the interactive version — the hole follows your cursor"><img src="assets/portrait.png" width="380" alt="ASCII portrait"></a>
 </td>
 <td align="center" valign="middle">
 <picture>
