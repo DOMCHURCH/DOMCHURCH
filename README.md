@@ -54,10 +54,18 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 ---
 
 <div align="center">
-
-![stats](https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true)
-![langs](https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=tokyonight&hide_border=true&langs_count=8)
-
+<table>
+<tr>
+<td align="center" valign="middle">
+<img src="assets/ascii-burn.svg" width="420" alt="ASCII portrait with a hole burning through it">
+</td>
+<td align="center" valign="middle">
+<img src="https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" alt="stats">
+<br>
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=tokyonight&hide_border=true&langs_count=8" alt="langs">
+</td>
+</tr>
+</table>
 </div>
 
 ---
