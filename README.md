@@ -57,23 +57,15 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 <table>
 <tr>
 <td align="center" valign="middle">
-<img src="assets/ascii-burn.svg" width="420" alt="ASCII portrait with a hole burning through it">
+<img src="assets/ascii-burn.svg" width="380" alt="ASCII portrait with a hole burning through it">
 </td>
 <td align="center" valign="middle">
-<img src="https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" alt="stats">
-<br>
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=tokyonight&hide_border=true&langs_count=8" alt="langs">
-</td>
-</tr>
-</table>
-</div>
-
----
-
-<div align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/DOMCHURCH/DOMCHURCH/output/github-snake-dark.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/DOMCHURCH/DOMCHURCH/output/github-snake.svg" />
-  <img alt="contribution snake" src="https://raw.githubusercontent.com/DOMCHURCH/DOMCHURCH/output/github-snake.svg" />
+  <img alt="contribution snake" width="520" src="https://raw.githubusercontent.com/DOMCHURCH/DOMCHURCH/output/github-snake.svg" />
 </picture>
+</td>
+</tr>
+</table>
 </div>

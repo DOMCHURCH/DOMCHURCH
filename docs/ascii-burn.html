@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>burn</title>
+<style>
+  :root{
+    --ink-0:#3d3d3d;
+    --ink-1:#767676;
+    --ink-2:#b4b4b4;
+    --ink-3:#f2f2f2;
+    --ember:#ff9d4d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  body{
+    font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    cursor:crosshair;
+  }
+  canvas{display:block;width:100vw;height:100vh}
+
+  .hud{
+    position:fixed; left:16px; bottom:14px;
+    font-size:10px; line-height:1.9; letter-spacing:.08em;
+    color:#5a5a5a; pointer-events:none; user-select:none;
+    text-transform:lowercase;
+    transition:color .4s ease;
+  }
+  .hud b{font-weight:400;color:#a8a8a8}
+  .hud .size{color:var(--ember)}
+  .hud.dim{color:#333}
+  .hud.dim b{color:#4a4a4a}
+
+  .drop{
+    position:fixed; inset:0; pointer-events:none;
+    border:1px dashed rgba(255,157,77,.55);
+    background:rgba(255,157,77,.04);
+    opacity:0; transition:opacity .18s ease;
+  }
+  .drop.on{opacity:1}
+
+  @media (max-width:640px){ .hud{font-size:9px; left:12px; bottom:12px} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="drop" id="drop"></div>
+<div class="hud" id="hud">
+  <b>move</b> to burn through &nbsp;·&nbsp; <b>click</b> for a burst<br>
+  <b>scroll</b> hole size — <span class="size" id="size">1.0 cm</span> &nbsp;·&nbsp; <b>drop an image</b> to replace the field &nbsp;·&nbsp; <b>r</b> resets
+</div>
+
+<script>
+(() => {
+  const cvs   = document.getElementById('c');
+  const ctx   = cvs.getContext('2d', { alpha:false });
+  const hud   = document.getElementById('hud');
+  const sizeEl= document.getElementById('size');
+  const dropEl= document.getElementById('drop');
+
+  const PX_PER_CM = 96 / 2.54;              // css px in one physical centimetre
+  const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+  const TIERS = ['#3d3d3d','#767676','#b4b4b4','#f2f2f2'];
+  const EMBERS = ['#ffd9a8','#ffab5e','#ff8a2b'];
+  const ASH = ['.', '`', "'", ',', '*', '~', ':'];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let W, H, dpr, cw, chh, cols, rows, fontSize, font;
+  let field, damage, heat, seed;
+  let sourceImg = null, imgField = null;
+  let ash = [];
+
+  let mx = -1e4, my = -1e4, px = -1e4, py = -1e4, active = false;
+  let holeCm = 1.0;
+  let t = 0, last = performance.now(), idle = 0;
+
+  /* ---------- grid ---------- */
+  function layout(){
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = window.innerWidth; H = window.innerHeight;
+    cvs.width = Math.floor(W * dpr); cvs.height = Math.floor(H * dpr);
+    cvs.style.width = W + 'px'; cvs.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    fontSize = W < 640 ? 9 : 11;
+    font = `${fontSize}px ui-monospace,"SF Mono",Menlo,Consolas,monospace`;
+    ctx.font = font;
+    cw  = ctx.measureText('M').width;
+    chh = Math.round(fontSize * 1.06);
+
+    cols = Math.ceil(W / cw) + 1;
+    rows = Math.ceil(H / chh) + 1;
+    const n = cols * rows;
+
+    field  = new Float32Array(n);
+    damage = new Float32Array(n);
+    heat   = new Float32Array(n);
+    seed   = new Float32Array(n);
+    for (let i = 0; i < n; i++) seed[i] = Math.random();
+
+    if (sourceImg) sampleImage(sourceImg);
+  }
+
+  /* ---------- value noise ---------- */
+  function hash(x, y){
+    let n = Math.imul(x, 374761393) + Math.imul(y, 668265263);
+    n = Math.imul(n ^ (n >>> 13), 1274126177);
+    return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
+  }
+  function vnoise(x, y){
+    const xi = Math.floor(x), yi = Math.floor(y);
+    const xf = x - xi, yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function fbm(x, y){
+    let s = 0, amp = 0.5, f = 1;
+    for (let i = 0; i < 3; i++){ s += amp * vnoise(x * f, y * f); f *= 2.03; amp *= 0.5; }
+    return s;
+  }
+
+  /* ---------- the field being burned ---------- */
+  function buildField(){
+    if (imgField){ field.set(imgField); return; }
+    const S = 0.011;                       // noise scale in px⁻¹
+    const dr = t * 0.055;                  // slow drift
+    for (let r = 0; r < rows; r++){
+      const y = r * chh * S;
+      for (let c = 0; c < cols; c++){
+        const x = c * cw * S;
+        const q1 = fbm(x + dr, y);
+        const q2 = fbm(x + 4.7, y + 2.1 - dr * 0.6);
+        let v = fbm(x + 2.6 * q1, y + 2.6 * q2);
+        v = (v - 0.33) * 2.15;             // push contrast toward the dense end
+        field[r * cols + c] = v < 0 ? 0 : v > 1 ? 1 : v;
+      }
+    }
+  }
+
+  function sampleImage(img){
+    const off = document.createElement('canvas');
+    off.width = cols; off.height = rows;
+    const o = off.getContext('2d');
+    o.fillStyle = '#000'; o.fillRect(0, 0, cols, rows);
+    // "contain" fit, corrected for the non-square character cell
+    const ar = img.width / img.height;
+    const cellAr = cw / chh;
+    let dw = cols, dh = cols / ar / cellAr;
+    if (dh > rows){ dh = rows; dw = rows * ar * cellAr; }
+    o.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+    const d = o.getImageData(0, 0, cols, rows).data;
+    imgField = new Float32Array(cols * rows);
+    for (let i = 0; i < cols * rows; i++){
+      const j = i * 4;
+      let l = (d[j] * 0.299 + d[j+1] * 0.587 + d[j+2] * 0.114) / 255;
+      l = (l - 0.12) * 1.45;
+      imgField[i] = l < 0 ? 0 : l > 1 ? 1 : l;
+    }
+  }
+
+  /* ---------- burning ---------- */
+  function radius(){ return holeCm * PX_PER_CM * 0.5 * 1.28; }
+
+  function burn(x, y, strength){
+    const R = radius() * strength;
+    const c0 = Math.max(0, Math.floor((x - R) / cw)),  c1 = Math.min(cols - 1, Math.ceil((x + R) / cw));
+    const r0 = Math.max(0, Math.floor((y - R) / chh)), r1 = Math.min(rows - 1, Math.ceil((y + R) / chh));
+    for (let r = r0; r <= r1; r++){
+      const dy = (r + 0.5) * chh - y;
+      for (let c = c0; c <= c1; c++){
+        const dx = (c + 0.5) * cw - x;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d > R) continue;
+        const i = r * cols + c;
+        const k = 1 - d / R;
+        const dmg = Math.min(1, k * 2.4);
+        if (dmg > damage[i]) damage[i] = dmg;
+        const rim = 1 - Math.abs(d - R * 0.78) / (R * 0.45);
+        if (rim > heat[i]) heat[i] = rim;
+      }
+    }
+  }
+
+  function spawnAsh(x, y, n){
+    const R = radius();
+    for (let k = 0; k < n && ash.length < 260; k++){
+      const a = Math.random() * Math.PI * 2, rr = R * (0.6 + Math.random() * 0.45);
+      ash.push({
+        x: x + Math.cos(a) * rr, y: y + Math.sin(a) * rr,
+        vx: Math.cos(a) * 0.18 + (Math.random() - 0.5) * 0.25,
+        vy: -0.22 - Math.random() * 0.55,
+        life: 1, ph: Math.random() * 6.28,
+        g: ASH[(Math.random() * ASH.length) | 0]
+      });
+    }
+  }
+
+  /* ---------- draw ---------- */
+  function render(dt){
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = font;
+    ctx.textBaseline = 'top';
+
+    const last = RAMP.length - 1;
+
+    for (let r = 0; r < rows; r++){
+      const y = r * chh;
+      let run = '', runStart = 0, runColor = TIERS[3], dirty = false;
+
+      for (let c = 0; c < cols; c++){
+        const i = r * cols + c;
+        const dmg = damage[i];
+        let glyph = ' ', color = runColor;
+
+        if (dmg < 0.55){
+          // crumbling rim: stable per-cell dropout so it doesn't strobe
+          const crumble = dmg > 0.28 && seed[i] < (dmg - 0.28) / 0.27 * 0.85;
+          if (!crumble){
+            let v = field[i] * (1 - dmg * 1.25);
+            if (v > 0.012){
+              glyph = RAMP[(v * last) | 0];
+              const h = heat[i];
+              color = h > 0.14
+                ? EMBERS[h > 0.62 ? 0 : h > 0.34 ? 1 : 2]
+                : TIERS[v > 0.62 ? 3 : v > 0.4 ? 2 : v > 0.2 ? 1 : 0];
+            }
+          }
+        }
+
+        if (glyph !== ' '){
+          if (color !== runColor){
+            if (dirty){ ctx.fillStyle = runColor; ctx.fillText(run, runStart * cw, y); }
+            run = ''; runStart = c; runColor = color; dirty = false;
+          }
+          dirty = true;
+        }
+        run += glyph;
+      }
+      if (dirty){ ctx.fillStyle = runColor; ctx.fillText(run, runStart * cw, y); }
+    }
+
+    // drifting ash
+    for (let k = ash.length - 1; k >= 0; k--){
+      const p = ash[k];
+      p.life -= dt * 0.95;
+      if (p.life <= 0){ ash.splice(k, 1); continue; }
+      p.x += (p.vx + Math.sin(t * 2.2 + p.ph) * 0.22) * dt * 60;
+      p.y += p.vy * dt * 60;
+      p.vy *= 0.992;
+      ctx.globalAlpha = Math.min(1, p.life * 1.4) * 0.85;
+      ctx.fillStyle = p.life > 0.6 ? EMBERS[1] : p.life > 0.3 ? EMBERS[0] : '#8a8a8a';
+      ctx.fillText(p.g, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------- loop ---------- */
+  function frame(now){
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (!reduce) t += dt;
+
+    buildField();
+
+    const decay = Math.pow(0.958, dt * 60);
+    const hdecay = Math.pow(0.90, dt * 60);
+    for (let i = 0; i < damage.length; i++){
+      if (damage[i] > 0){ damage[i] *= decay; if (damage[i] < 0.004) damage[i] = 0; }
+      if (heat[i]   > 0){ heat[i]   *= hdecay; if (heat[i]   < 0.01)  heat[i]   = 0; }
+    }
+
+    if (active){
+      const R = radius();
+      const dx = mx - px, dy = my - py;
+      const dist = Math.hypot(dx, dy);
+      const steps = Math.min(48, Math.max(1, Math.ceil(dist / (R * 0.35))));
+      for (let s = 1; s <= steps; s++) burn(px + dx * s / steps, py + dy * s / steps, 1);
+      if (dist > 0.4 && Math.random() < 0.55) spawnAsh(mx, my, 1);
+      px = mx; py = my;
+    }
+
+    render(dt);
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- input ---------- */
+  function move(x, y){
+    if (!active){ px = x; py = y; }
+    mx = x; my = y; active = true;
+    if (idle){ clearTimeout(idle); }
+    hud.classList.add('dim');
+  }
+
+  window.addEventListener('pointermove', e => move(e.clientX, e.clientY), { passive:true });
+  window.addEventListener('pointerdown', e => {
+    move(e.clientX, e.clientY);
+    burn(e.clientX, e.clientY, 2.1);
+    spawnAsh(e.clientX, e.clientY, 26);
+  });
+  window.addEventListener('pointerleave', () => { active = false; });
+
+  window.addEventListener('wheel', e => {
+    e.preventDefault();
+    holeCm = Math.min(6, Math.max(0.3, holeCm + (e.deltaY > 0 ? -0.1 : 0.1)));
+    sizeEl.textContent = holeCm.toFixed(1) + ' cm';
+    hud.classList.remove('dim');
+  }, { passive:false });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'r' || e.key === 'R'){
+      sourceImg = null; imgField = null;
+      damage.fill(0); heat.fill(0); ash.length = 0;
+      hud.classList.remove('dim');
+    }
+  });
+
+  window.addEventListener('dragover', e => { e.preventDefault(); dropEl.classList.add('on'); });
+  window.addEventListener('dragleave', () => dropEl.classList.remove('on'));
+  window.addEventListener('drop', e => {
+    e.preventDefault(); dropEl.classList.remove('on');
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f || !f.type.startsWith('image')) return;
+    const img = new Image();
+    img.onload = () => { sourceImg = img; sampleImage(img); };
+    img.src = URL.createObjectURL(f);
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(layout, 120); });
+
+  layout();
+  setTimeout(() => hud.classList.add('dim'), 6000);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

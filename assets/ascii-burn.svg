@@ -14,18 +14,18 @@
     <!-- ragged edge, so the hole reads as eaten rather than punched -->
     <filter id="crumble" x="-80%" y="-80%" width="260%" height="260%">
       <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="3" seed="11" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="19.0"
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="21.0"
                          xChannelSelector="R" yChannelSelector="G"/>
     </filter>
 
     <filter id="soften" x="-100%" y="-100%" width="300%" height="300%">
-      <feGaussianBlur stdDeviation="27.4"/>
+      <feGaussianBlur stdDeviation="30.3"/>
     </filter>
 
     <mask id="hole" maskUnits="userSpaceOnUse" x="0" y="0" width="792" height="922">
       <rect width="792" height="922" fill="#fff"/>
       <g filter="url(#crumble)">
-        <circle r="49.9" fill="url(#core)">
+        <circle r="55.1" fill="url(#core)">
           <animateMotion dur="26s" repeatCount="indefinite" calcMode="linear" rotate="0">
             <mpath href="#trail" xlink:href="#trail"/>
           </animateMotion>
@@ -37,7 +37,7 @@
     <mask id="glow" maskUnits="userSpaceOnUse" x="0" y="0" width="792" height="922">
       <rect width="792" height="922" fill="#000"/>
       <g filter="url(#soften)">
-        <circle r="84.8" fill="none" stroke="#8c8c8c" stroke-width="84.8">
+        <circle r="93.7" fill="none" stroke="#8c8c8c" stroke-width="93.7">
           <animateMotion dur="26s" repeatCount="indefinite" calcMode="linear" rotate="0">
             <mpath href="#trail" xlink:href="#trail"/>
           </animateMotion>
@@ -48,7 +48,7 @@
     <mask id="rim" maskUnits="userSpaceOnUse" x="0" y="0" width="792" height="922">
       <rect width="792" height="922" fill="#000"/>
       <g filter="url(#crumble)">
-        <circle r="43.9" fill="none" stroke="#fff" stroke-width="24.9">
+        <circle r="48.5" fill="none" stroke="#fff" stroke-width="27.6">
           <animateMotion dur="26s" repeatCount="indefinite" calcMode="linear" rotate="0">
             <mpath href="#trail" xlink:href="#trail"/>
           </animateMotion>
