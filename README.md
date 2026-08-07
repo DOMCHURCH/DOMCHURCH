@@ -1,6 +1,6 @@
 <div align="center">
 
-![header](https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:203a43,100:2c5364&height=200&section=header&text=Dominique%20Church&fontSize=58&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Solo%20founder%20%C2%B7%20shipping%20live%20products&descSize=18&descAlignY=60)
+<img src="assets/header.svg" width="880" alt="Dominique Church — public-data finance systems">
 
 [![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3200&pause=800&color=58A6FF&center=true&width=620&lines=Geopolitical+risk+%C2%B7+equity+research+%C2%B7+SEC+data;FastAPI+%C2%B7+React+%C2%B7+real+public+data%2C+no+paywalls;Eight+web+properties+live+in+production)](https://git.io/typing-svg)
 
@@ -57,7 +57,7 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 <table>
 <tr>
 <td align="center" valign="middle">
-<a href="https://domchurch.github.io/DOMCHURCH/" title="Open the interactive version — the hole follows your cursor"><img src="assets/ascii-burn.svg?v=2" width="380" alt="ASCII portrait with a hole burning through it"></a>
+<a href="https://domchurch.github.io/DOMCHURCH/" title="Open the interactive version — the hole follows your cursor"><img src="assets/ascii-burn.svg?v=3" width="380" alt="ASCII portrait with a hole burning through it"></a>
 </td>
 <td align="center" valign="middle">
 <picture>

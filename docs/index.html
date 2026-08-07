@@ -3,55 +3,298 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>burn</title>
+<title>Dominique Church — public-data finance systems</title>
+<meta name="description" content="Systems that turn SEC filings and public data into things you can make decisions with.">
 <style>
+  /* Terminal amber on deep ink. The palette is picked off the subject: trading
+     terminals have read amber-on-black for forty years, and the greys carry a
+     blue bias so they read as instrument housing rather than default grey. */
   :root{
-    --ink-0:#3d3d3d;
-    --ink-1:#767676;
-    --ink-2:#b4b4b4;
-    --ink-3:#f2f2f2;
-    --ember:#ff9d4d;
+    --ground:#06090F;
+    --ground-2:#0A0F18;
+    --text:#E7ECF3;
+    --dim:#8494A8;
+    --faint:#5A6879;
+    --accent:#F2A93B;
+    --cyan:#57D0C4;
+    --up:#3FB950;
+    --down:#F85149;
+    --glass:rgba(255,255,255,.045);
+    --glass-2:rgba(255,255,255,.028);
+    --stroke:rgba(255,255,255,.10);
+    --stroke-2:rgba(255,255,255,.055);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:"Inter var",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --maxw:1080px;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  html{scroll-behavior:smooth}
   body{
-    font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
-    cursor:crosshair;
+    margin:0; background:var(--ground); color:var(--text);
+    font-family:var(--sans); line-height:1.6;
+    -webkit-font-smoothing:antialiased;
   }
-  canvas{display:block;width:100vw;height:100vh}
 
-  .hud{
-    position:fixed; left:16px; bottom:14px;
-    font-size:10px; line-height:1.9; letter-spacing:.08em;
-    color:#5a5a5a; pointer-events:none; user-select:none;
-    text-transform:lowercase;
-    transition:color .4s ease;
+  /* The live ASCII burn sits behind everything; the panels blur it. That is
+     what makes the glass read as glass instead of as flat translucency. */
+  #c{position:fixed; inset:0; width:100vw; height:100vh; z-index:0; display:block}
+  .veil{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 50% 0%, transparent 0%, rgba(6,9,15,.55) 55%, rgba(6,9,15,.88) 100%),
+      linear-gradient(180deg, transparent 0 40vh, var(--ground) 130vh);
   }
-  .hud b{font-weight:400;color:#a8a8a8}
-  .hud .size{color:var(--ember)}
-  .hud.dim{color:#333}
-  .hud.dim b{color:#4a4a4a}
-
-  .drop{
-    position:fixed; inset:0; pointer-events:none;
-    border:1px dashed rgba(255,157,77,.55);
-    background:rgba(255,157,77,.04);
-    opacity:0; transition:opacity .18s ease;
-  }
+  /* Fades the live field out as you leave the hero, so the reading sections
+     sit on near-solid ground while the glass still blurs something real. */
+  .dimmer{position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:var(--ground); opacity:0}
+  .drop{position:fixed; inset:0; z-index:4; pointer-events:none;
+    border:1px dashed rgba(242,169,59,.55); background:rgba(242,169,59,.04);
+    opacity:0; transition:opacity .18s ease}
   .drop.on{opacity:1}
 
-  @media (max-width:640px){ .hud{font-size:9px; left:12px; bottom:12px} }
+  main{position:relative; z-index:2}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+
+  /* ---------- glass ---------- */
+  .glass{
+    background:var(--glass);
+    border:1px solid var(--stroke);
+    border-radius:16px;
+    backdrop-filter:blur(20px) saturate(150%);
+    -webkit-backdrop-filter:blur(20px) saturate(150%);
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 24px 60px -30px rgba(0,0,0,.9);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{min-height:100svh; display:flex; align-items:center; padding:96px 0 64px}
+  .card-hero{padding:38px 40px; max-width:640px}
+  .eyebrow{
+    font:500 11px/1 var(--mono); letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:10px; margin:0 0 20px;
+  }
+  .eyebrow::before{content:""; width:26px; height:1px; background:var(--accent); opacity:.7}
+  h1{
+    font:600 clamp(34px,5.4vw,54px)/1.06 var(--sans);
+    letter-spacing:-.025em; margin:0 0 16px; text-wrap:balance;
+  }
+  .lede{color:var(--dim); font-size:16.5px; margin:0 0 28px; max-width:52ch}
+  .lede b{color:var(--text); font-weight:600}
+  .cta{display:flex; flex-wrap:wrap; gap:10px}
+  .btn{
+    font:500 13px/1 var(--mono); letter-spacing:.02em;
+    padding:12px 18px; border-radius:10px; text-decoration:none;
+    border:1px solid var(--stroke); color:var(--text);
+    background:var(--glass-2); transition:border-color .18s, background .18s, transform .18s;
+  }
+  .btn:hover{border-color:rgba(242,169,59,.55); background:rgba(242,169,59,.08); transform:translateY(-1px)}
+  .btn.primary{border-color:rgba(242,169,59,.45); color:var(--accent)}
+  .hint{
+    margin:26px 0 0; font:400 11.5px/1.7 var(--mono); color:var(--faint);
+  }
+  .hint b{color:var(--dim); font-weight:400}
+
+  /* ---------- metric strip ---------- */
+  .metrics{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    overflow:hidden; margin:0 0 56px;
+  }
+  .metric{padding:22px 20px; background:var(--glass-2)}
+  .metric .n{
+    font:600 26px/1 var(--mono); letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums; color:var(--text);
+  }
+  .metric .n span{color:var(--accent)}
+  .metric .k{
+    margin-top:7px; font:400 10.5px/1.4 var(--mono);
+    letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:0 0 72px}
+  .sec-head{
+    display:flex; align-items:baseline; gap:16px; margin:0 0 26px;
+    border-bottom:1px solid var(--stroke-2); padding-bottom:14px;
+  }
+  h2{font:600 20px/1 var(--sans); letter-spacing:-.01em; margin:0}
+  .sec-head .note{font:400 11px/1 var(--mono); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--faint); margin-left:auto}
+
+  .work{display:grid; gap:18px}
+  .proj{padding:30px 32px; display:grid; gap:14px; transition:border-color .2s, transform .2s}
+  .proj:hover{border-color:rgba(242,169,59,.32); transform:translateY(-2px)}
+  .proj-top{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .proj h3{margin:0; font:600 19px/1.2 var(--sans); letter-spacing:-.012em}
+  .proj h3 a{color:var(--text); text-decoration:none}
+  .proj h3 a:hover{color:var(--accent)}
+  .tag{
+    font:500 10px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase;
+    padding:5px 9px; border-radius:5px; color:var(--cyan);
+    background:rgba(87,208,196,.09); border:1px solid rgba(87,208,196,.22);
+  }
+  .live{color:var(--up); background:rgba(63,185,80,.09); border-color:rgba(63,185,80,.24)}
+  .proj p{margin:0; color:var(--dim); font-size:14.6px; max-width:70ch}
+  .proj p b{color:var(--text); font-weight:600}
+  .proj code{
+    font:400 12.5px/1 var(--mono); padding:2px 6px; border-radius:4px;
+    background:rgba(255,255,255,.05); color:var(--cyan);
+  }
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:2px}
+  .chip{
+    font:400 11px/1 var(--mono); letter-spacing:.04em; color:var(--faint);
+    padding:6px 9px; border-radius:5px; border:1px solid var(--stroke-2);
+  }
+
+  /* Row of figures inside a project card. Digits line up because they are
+     tabular -- a column of numbers that jitters reads as untrustworthy. */
+  .figs{display:flex; flex-wrap:wrap; gap:26px; padding-top:4px}
+  .fig .v{font:600 15px/1 var(--mono); font-variant-numeric:tabular-nums; color:var(--accent)}
+  .fig .l{margin-top:5px; font:400 10px/1 var(--mono); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--faint)}
+
+  footer{
+    position:relative; z-index:2; border-top:1px solid var(--stroke-2);
+    padding:30px 0 60px; margin-top:20px;
+  }
+  .foot{display:flex; flex-wrap:wrap; gap:18px; align-items:center;
+    font:400 12px/1 var(--mono); color:var(--faint)}
+  .foot a{color:var(--dim); text-decoration:none}
+  .foot a:hover{color:var(--accent)}
+  .foot .sp{margin-left:auto}
+
+  .hud{
+    position:fixed; left:18px; bottom:16px; z-index:3;
+    font:400 10.5px/1.9 var(--mono); letter-spacing:.06em;
+    color:var(--faint); pointer-events:none; user-select:none;
+    transition:opacity .5s ease;
+  }
+  .hud b{font-weight:400; color:var(--dim)}
+  .hud .size{color:var(--accent)}
+  .hud.dim{opacity:.32}
+
+  a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:8px}
+
+  @media (max-width:860px){
+    .metrics{grid-template-columns:repeat(2,1fr)}
+    .card-hero{padding:30px 24px}
+    .proj{padding:24px 22px}
+  }
+  @media (max-width:560px){
+    .hud{display:none}
+    .foot .sp{margin-left:0; width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .proj:hover,.btn:hover{transform:none}
+  }
 </style>
 </head>
 <body>
+
 <canvas id="c"></canvas>
+<div class="veil"></div>
+<div class="dimmer" id="dimmer"></div>
 <div class="drop" id="drop"></div>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="glass card-hero">
+        <p class="eyebrow">Solo founder · public-data systems</p>
+        <h1>Filings in. Something you can act on out.</h1>
+        <p class="lede">I build self-contained systems that ingest <b>real public data</b> — SEC filings, sanctions lists, macro series — and turn it into something you can actually make a decision with. No paywalled feeds, and nothing estimated where the filing is silent.</p>
+        <div class="cta">
+          <a class="btn primary" href="#work">See the work</a>
+          <a class="btn" href="https://github.com/DOMCHURCH">GitHub</a>
+          <a class="btn" href="mailto:01dominique.c@gmail.com">Email</a>
+        </div>
+        <p class="hint"><b>move your cursor</b> to burn through the background · <b>click</b> for a burst · <b>shift + scroll</b> resizes the hole · <b>drop an image</b> to replace it · <b>r</b> resets</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="metrics glass">
+        <div class="metric"><div class="n">1.24<span>M</span></div><div class="k">as-reported facts</div></div>
+        <div class="metric"><div class="n">5,944</div><div class="k">companies</div></div>
+        <div class="metric"><div class="n">~75</div><div class="k">countries tracked</div></div>
+        <div class="metric"><div class="n">99.9<span>%</span></div><div class="k">identity pass rate</div></div>
+      </div>
+
+      <div class="sec-head">
+        <h2>Live in production</h2>
+        <span class="note">three of eight</span>
+      </div>
+
+      <div class="work">
+        <article class="glass proj">
+          <div class="proj-top">
+            <h3><a href="https://alphacode-production.up.railway.app">To Scale</a></h3>
+            <span class="tag live">live</span>
+            <span class="tag">SEC bulk data</span>
+          </div>
+          <p>Every US public company's balance sheet drawn at <b>true proportion</b>, so a bank, a retailer and a software company produce visibly different shapes. Nothing is estimated: where a company doesn't report a line item, the page says so. The hard part was selection — JPMorgan reports total assets <b>23 times in one filing</b> and exactly one row is consolidated. Mapping noncontrolling interests and bank-specific tags took the accounting identity <code>assets = liabilities + equity</code> from 78.6% to 99.9% within 1%.</p>
+          <div class="figs">
+            <div class="fig"><div class="v">1.24M</div><div class="l">facts loaded</div></div>
+            <div class="fig"><div class="v">5,944</div><div class="l">companies</div></div>
+            <div class="fig"><div class="v">7</div><div class="l">quarters</div></div>
+            <div class="fig"><div class="v">78.6% → 99.9%</div><div class="l">identity pass</div></div>
+          </div>
+          <div class="chips"><span class="chip">FastAPI</span><span class="chip">PostgreSQL</span><span class="chip">SQLAlchemy</span><span class="chip">Railway</span></div>
+        </article>
+
+        <article class="glass proj">
+          <div class="proj-top">
+            <h3><a href="https://sovereign-rust-two.vercel.app">Sovereign</a></h3>
+            <span class="tag live">live</span>
+            <span class="tag">geopolitical risk</span>
+          </div>
+          <p>Continuously ingests public data across ~75 countries, fuses it into a typed <code>Country</code> ontology, runs a <b>contagion model</b> over the resulting graph, and exposes it through a dashboard with a natural-language analyst chat. Outputs a composite <b>0–100 risk score</b> per country plus cross-border spillover alerts modelled on financial correlation, trade openness and regional adjacency. Free, no-paywall connectors only.</p>
+          <div class="figs">
+            <div class="fig"><div class="v">~75</div><div class="l">countries</div></div>
+            <div class="fig"><div class="v">11</div><div class="l">news sources</div></div>
+            <div class="fig"><div class="v">15 min</div><div class="l">fast cycle</div></div>
+            <div class="fig"><div class="v">6 hr</div><div class="l">full cycle</div></div>
+          </div>
+          <div class="chips"><span class="chip">FastAPI</span><span class="chip">DuckDB</span><span class="chip">React</span><span class="chip">NetworkX</span><span class="chip">World Bank · FRED · OFAC · GDELT</span></div>
+        </article>
+
+        <article class="glass proj">
+          <div class="proj-top">
+            <h3><a href="https://axiom-mu-ten.vercel.app">Axiom</a></h3>
+            <span class="tag live">live</span>
+            <span class="tag">equity research</span>
+          </div>
+          <p>Ticker in, fully priced research note out. Resolves the ticker to a CIK against SEC's company_tickers file, pulls <b>five years</b> of XBRL company facts from <code>data.sec.gov</code>, derives margins and Piotroski F-score inputs, runs an analysis pass, and renders a complete note — <b>DCF, comparables, bull/bear thesis, risk score, recommendation</b> — exportable to PDF.</p>
+          <div class="figs">
+            <div class="fig"><div class="v">5 yr</div><div class="l">XBRL history</div></div>
+            <div class="fig"><div class="v">9</div><div class="l">Piotroski inputs</div></div>
+            <div class="fig"><div class="v">PDF</div><div class="l">export</div></div>
+          </div>
+          <div class="chips"><span class="chip">Vite</span><span class="chip">React</span><span class="chip">Vercel</span><span class="chip">Neon Postgres</span><span class="chip">Clerk</span><span class="chip">Groq llama-3.3-70b</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>Dominique Church</span>
+    <a href="https://github.com/DOMCHURCH">github.com/DOMCHURCH</a>
+    <a href="mailto:01dominique.c@gmail.com">01dominique.c@gmail.com</a>
+    <span class="sp">Background is live — drop an image on it.</span>
+  </div>
+</footer>
+
 <div class="hud" id="hud">
-  <b>move</b> to burn through &nbsp;·&nbsp; <b>click</b> for a burst<br>
-  <b>scroll</b> hole size — <span class="size" id="size">1.0 cm</span> &nbsp;·&nbsp; <b>drop an image</b> to replace the field &nbsp;·&nbsp; <b>r</b> resets
+  <b>move</b> to burn &nbsp;·&nbsp; <b>click</b> for a burst<br>
+  <b>shift + scroll</b> hole size — <span class="size" id="size">1.0 cm</span> &nbsp;·&nbsp; <b>r</b> resets
 </div>
 
 <script>
+
 (() => {
   const cvs   = document.getElementById('c');
   const ctx   = cvs.getContext('2d', { alpha:false });
@@ -302,7 +545,9 @@
   });
   window.addEventListener('pointerleave', () => { active = false; });
 
+  // Shift+wheel resizes the hole; a bare wheel must still scroll the page.
   window.addEventListener('wheel', e => {
+    if (!e.shiftKey) return;
     e.preventDefault();
     holeCm = Math.min(6, Math.max(0.3, holeCm + (e.deltaY > 0 ? -0.1 : 0.1)));
     sizeEl.textContent = holeCm.toFixed(1) + ' cm';
@@ -334,6 +579,25 @@
   layout();
   setTimeout(() => hud.classList.add('dim'), 6000);
   requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+// Dim the burn field on scroll. Passive listener + a single style write per
+// frame; rAF-coalesced so a fast scroll cannot queue a write per event.
+(() => {
+  const el = document.getElementById('dimmer');
+  let queued = false;
+  const apply = () => {
+    queued = false;
+    const o = Math.min(0.86, (window.scrollY / (window.innerHeight * 0.7)) * 0.86);
+    el.style.opacity = o.toFixed(3);
+  };
+  addEventListener('scroll', () => {
+    if (!queued) { queued = true; requestAnimationFrame(apply); }
+  }, { passive: true });
+  addEventListener('resize', apply, { passive: true });
+  apply();
 })();
 </script>
 </body>
