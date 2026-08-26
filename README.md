@@ -68,4 +68,15 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 </td>
 </tr>
 </table>
+
+[![GitHub Stats](https://github-readme-stats.vercel.app/api?username=DOMCHURCH&show_icons=true&theme=dark&hide_border=true)](https://github.com/DOMCHURCH)
+
+[![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=DOMCHURCH&layout=compact&theme=dark&hide_border=true)](https://github.com/DOMCHURCH)
+
+</div>
+
+---
+
+<div align="center">
+Ottawa · Building things that matter · 2026
 </div>
