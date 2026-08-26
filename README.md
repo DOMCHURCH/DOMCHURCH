@@ -2,6 +2,10 @@
 
 <img src="assets/header.svg" width="880" alt="Dominique Church — public-data finance systems">
 
+<!-- Pixel art agent: commit the image to this repo as assets/agent-pixel.png (or push it to
+     DOMCHURCH/Gnosis under docs/ and swap in the raw.githubusercontent URL), then uncomment: -->
+<!-- <img src="assets/agent-pixel.png" width="420" alt="Gnosis pixel art agent"> -->
+
 [![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3200&pause=800&color=58A6FF&center=true&width=620&lines=Geopolitical+risk+%C2%B7+equity+research+%C2%B7+SEC+data;FastAPI+%C2%B7+React+%C2%B7+real+public+data%2C+no+paywalls;Eight+web+properties+live+in+production)](https://git.io/typing-svg)
 
 </div>
@@ -10,7 +14,15 @@
 
 ### Live in production
 
-I build self-contained systems that ingest real public data and turn it into something you can actually make decisions with. Three of the most substantial below.
+I build self-contained systems that ingest real public data and turn it into something you can actually make decisions with. Four of the most substantial below.
+
+#### 🤖 [Gnosis](https://github.com/DOMCHURCH/Gnosis) — terminal coding agent
+Open-source terminal coding agent with a live Three.js 3D office floor where AI agents animate between zones in real time. Any model via OpenRouter, switch mid-session without losing context. MCP client, Obsidian memory, 100 test suites. MIT licensed.
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-6467F2?style=flat-square)
 
 #### 🌍 [Sovereign](https://sovereign-rust-two.vercel.app) — geopolitical risk intelligence
 Continuously ingests live public data across ~75 countries, fuses it into a typed `Country` ontology, runs a contagion model over the resulting graph, and exposes it through a dashboard with a natural-language LLM analyst chat. Outputs a composite **0–100 risk score** per country plus cross-border spillover alerts modelled on financial correlation, trade openness and regional adjacency. Free, no-paywall connectors only: World Bank WDI/WGI, FRED, OFAC SDN, country-proxy ETFs, VADER-scored news from 11 outlets, GDELT, Open-Meteo. 15-minute fast cycle, 6-hour full cycle.
