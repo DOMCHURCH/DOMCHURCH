@@ -6,7 +6,7 @@
      DOMCHURCH/Gnosis under docs/ and swap in the raw.githubusercontent URL), then uncomment: -->
 <!-- <img src="assets/agent-pixel.png" width="420" alt="Gnosis pixel art agent"> -->
 
-[![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3200&pause=800&color=58A6FF&center=true&width=620&lines=Geopolitical+risk+%C2%B7+equity+research+%C2%B7+SEC+data;FastAPI+%C2%B7+React+%C2%B7+real+public+data%2C+no+paywalls;Eight+web+properties+live+in+production)](https://git.io/typing-svg)
+[![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3200&pause=800&color=58A6FF&center=true&width=620&lines=Geopolitical+risk+%C2%B7+equity+research+%C2%B7+SEC+data;FastAPI+%C2%B7+React+%C2%B7+DuckDB+%C2%B7+Postgres+%C2%B7+real+public+data;Eight+web+properties+live+in+production)](https://git.io/typing-svg)
 
 </div>
 
@@ -14,18 +14,18 @@
 
 ### Live in production
 
-I build self-contained systems that ingest real public data and turn it into something you can actually make decisions with. Four of the most substantial below.
+I build self-contained data systems: scheduled ingestion from free public sources (SEC EDGAR, GDELT, World Bank, FRED, OFAC), typed storage, a scoring or valuation model on top, and a UI that shows the result at full resolution. Everything below is deployed and running on real data — no mocks, no paywalled feeds.
 
 #### 🤖 [Gnosis](https://github.com/DOMCHURCH/Gnosis) — terminal coding agent
-Open-source terminal coding agent with a live Three.js 3D office floor where AI agents animate between zones in real time. Any model via OpenRouter, switch mid-session without losing context. MCP client, Obsidian memory, 100 test suites. MIT licensed.
+Open-source terminal coding agent (TypeScript + Ink) with a browser UI (`dom serve`) and a live Three.js 3D office floor where sub-agents animate between zones as they work. Provider-agnostic via OpenRouter — switch models mid-session with the conversation intact, automatic fallback to the cheapest paid model on upstream errors. MCP client, Obsidian-backed long-term memory, local Kokoro TTS voice overlay, Electron desktop build with notify-only auto-updater, token-bucket rate limiting and host-allowlisted server with timing-safe auth. **150+ verify suites** run on every CI push (Windows + Playwright). MIT.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-6467F2?style=flat-square)
 
-#### 🌍 [Sovereign](https://sovereign-rust-two.vercel.app) — geopolitical risk intelligence
-Continuously ingests live public data across ~75 countries, fuses it into a typed `Country` ontology, runs a contagion model over the resulting graph, and exposes it through a dashboard with a natural-language LLM analyst chat. Outputs a composite **0–100 risk score** per country plus cross-border spillover alerts modelled on financial correlation, trade openness and regional adjacency. Free, no-paywall connectors only: World Bank WDI/WGI, FRED, OFAC SDN, country-proxy ETFs, VADER-scored news from 11 outlets, GDELT, Open-Meteo. 15-minute fast cycle, 6-hour full cycle.
+#### 🌍 [Sovereign](https://sovereign-production-0351.up.railway.app) — geopolitical risk intelligence
+Continuously ingests public data across ~75 countries, fuses it into a typed `Country` ontology in DuckDB, and runs a NetworkX contagion model over the resulting graph. Outputs a composite **0–100 risk score** per country, a history/delta series, and cross-border spillover alerts weighted by financial correlation, trade openness and regional adjacency. A **GDELT bulk-event ingestor** parses the 15-minute export files, filters to violent CAMEO codes, deduplicates and cross-corroborates sources, and renders ~700 geolocated incidents/day onto a WebGL globe (NASA Blue Marble textures, real sun position) with click-through to the source article. Connectors are free and keyless: World Bank WDI/WGI, FRED, OFAC SDN, country-proxy ETFs, VADER-scored news from 11 outlets, GDELT, Open-Meteo. APScheduler drives a 15-minute fast cycle and a 6-hour full cycle on a Railway persistent volume; an LLM analyst chat sits over the same store.
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![DuckDB](https://img.shields.io/badge/DuckDB-FFF000?style=flat-square&logo=duckdb&logoColor=black)
@@ -90,5 +90,5 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 ---
 
 <div align="center">
-Ottawa · Building things that matter · 2026
+Ottawa · Public data, real systems · 2026
 </div>
