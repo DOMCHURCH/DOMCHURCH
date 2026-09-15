@@ -16,6 +16,8 @@
 
 I build self-contained data systems: scheduled ingestion from free public sources (SEC EDGAR, GDELT, World Bank, FRED, OFAC), typed storage, a scoring or valuation model on top, and a UI that shows the result at full resolution. Everything below is deployed and running on real data — no mocks, no paywalled feeds.
 
+Current flagship: BalanceProof — reconciled SEC balance sheet data, live at [balanceproof.dev](https://balanceproof.dev).
+
 #### 🤖 [Gnosis](https://github.com/DOMCHURCH/Gnosis) — terminal coding agent
 Open-source terminal coding agent (TypeScript + Ink) with a browser UI (`dom serve`) and a live Three.js 3D office floor where sub-agents animate between zones as they work. Provider-agnostic via OpenRouter — switch models mid-session with the conversation intact, automatic fallback to the cheapest paid model on upstream errors. MCP client, Obsidian-backed long-term memory, local Kokoro TTS voice overlay, Electron desktop build with notify-only auto-updater, token-bucket rate limiting and host-allowlisted server with timing-safe auth. **150+ verify suites** run on every CI push (Windows + Playwright). MIT.
 
@@ -42,8 +44,16 @@ Ticker in, fully priced research note out. Resolves the ticker to a CIK against 
 ![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=flat-square)
 ![Groq](https://img.shields.io/badge/Groq%20llama--3.3--70b-F55036?style=flat-square)
 
-#### ⚖️ [To Scale](https://alphacode-production.up.railway.app) — balance sheets at true proportion
-Every US public company's balance sheet rendered at real scale from SEC filings, so a bank, a retailer and a software company produce visibly different shapes. Nothing estimated: where a company doesn't report a line item, the page says so. Built on **1.24M as-reported facts across 5,944 companies and seven quarters**, loaded from SEC bulk datasets. The hard part was selection — JPMorgan reports total assets 23 times in one filing and exactly one row is consolidated; mapping noncontrolling interests and bank-specific tags raised the accounting-identity pass rate from 78.6% to **99.9%** (`assets = liabilities + equity` within 1%).
+#### ⚖️ [BalanceProof](https://balanceproof.dev) — reconciled balance sheets at true proportion
+Every US public company's balance sheet, drawn at real scale from SEC filings. A bank, a retailer and a software company produce visibly different shapes. Three views per company: what it owns and who has a claim on it, where each dollar of revenue goes, and how its annual sales compare to national GDP.
+
+The hard part was selection: SEC reports the same figure many times per filing, split by segment, geography and legal entity. JPMorgan files "total assets" 23 separate times, and exactly one row is the consolidated company. Every filing is reconciled against the accounting identity (Assets = Liabilities + Equity) before it is stored. 6,224 companies covered. 4,912 reconcile directly. 215 flagged with a specific reason. 0 hidden.
+
+Live: https://balanceproof.dev
+
+API: https://balanceproof.dev/api
+
+Repo: https://github.com/DOMCHURCH/AlphaCode
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)
@@ -90,5 +100,5 @@ Every US public company's balance sheet rendered at real scale from SEC filings,
 ---
 
 <div align="center">
-Ottawa · Public data, real systems · 2026
+Ottawa · Public data, real systems · 2026 · balanceproof.dev
 </div>

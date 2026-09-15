@@ -37,5 +37,5 @@
   <line x1="0" y1="136" x2="880" y2="136" class="div"/>
   <rect y="136" width="880" height="60" fill="#0A0F17"/>
   <line x1="0" y1="136" x2="880" y2="136" class="div"/>
-  <line x1="660" y1="146" x2="660" y2="186" class="div"/><line x1="440" y1="146" x2="440" y2="186" class="div"/><line x1="220" y1="146" x2="220" y2="186" class="div"/><text x="26" y="163" class="sv">1.24M</text><text x="26" y="179" class="sk">AS-REPORTED FACTS</text><text x="246" y="163" class="sv">5,944</text><text x="246" y="179" class="sk">COMPANIES</text><text x="466" y="163" class="sv">~75</text><text x="466" y="179" class="sk">COUNTRIES</text><text x="686" y="163" class="sv">99.9%</text><text x="686" y="179" class="sk">IDENTITY PASS</text>
+  <line x1="660" y1="146" x2="660" y2="186" class="div"/><line x1="440" y1="146" x2="440" y2="186" class="div"/><line x1="220" y1="146" x2="220" y2="186" class="div"/><text x="26" y="163" class="sv">1.6M</text><text x="26" y="179" class="sk">AS-REPORTED FACTS</text><text x="246" y="163" class="sv">6,224</text><text x="246" y="179" class="sk">COMPANIES</text><text x="466" y="163" class="sv">~75</text><text x="466" y="179" class="sk">COUNTRIES</text><text x="686" y="163" class="sv">4,912</text><text x="686" y="179" class="sk">RECONCILED</text>
 </svg>
