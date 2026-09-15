@@ -216,10 +216,10 @@
   <section id="work">
     <div class="wrap">
       <div class="metrics glass">
-        <div class="metric"><div class="n">1.24<span>M</span></div><div class="k">as-reported facts</div></div>
-        <div class="metric"><div class="n">5,944</div><div class="k">companies</div></div>
+        <div class="metric"><div class="n">1.6<span>M</span></div><div class="k">as-reported facts</div></div>
+        <div class="metric"><div class="n">6,224</div><div class="k">companies</div></div>
         <div class="metric"><div class="n">~75</div><div class="k">countries tracked</div></div>
-        <div class="metric"><div class="n">99.9<span>%</span></div><div class="k">identity pass rate</div></div>
+        <div class="metric"><div class="n">4,912</div><div class="k">sheets reconciled</div></div>
       </div>
 
       <div class="sec-head">
@@ -230,16 +230,16 @@
       <div class="work">
         <article class="glass proj">
           <div class="proj-top">
-            <h3><a href="https://alphacode-production.up.railway.app">To Scale</a></h3>
+            <h3><a href="https://balanceproof.dev">BalanceProof</a></h3>
             <span class="tag live">live</span>
             <span class="tag">SEC bulk data</span>
           </div>
-          <p>Every US public company's balance sheet drawn at <b>true proportion</b>, so a bank, a retailer and a software company produce visibly different shapes. Nothing is estimated: where a company doesn't report a line item, the page says so. The hard part was selection — JPMorgan reports total assets <b>23 times in one filing</b> and exactly one row is consolidated. Mapping noncontrolling interests and bank-specific tags took the accounting identity <code>assets = liabilities + equity</code> from 78.6% to 99.9% within 1%.</p>
+          <p>Every US public company's balance sheet drawn at <b>true proportion</b>, so a bank, a retailer and a software company produce visibly different shapes. Three views per company: what it owns and who has a claim on it, where each dollar of revenue goes, and how its annual sales compare to national GDP. The hard part was selection: SEC reports the same figure many times per filing, split by segment, geography and legal entity. JPMorgan files total assets <b>23 separate times</b> and exactly one row is the consolidated company. Every filing is reconciled against <code>assets = liabilities + equity</code> before it is stored.</p>
           <div class="figs">
-            <div class="fig"><div class="v">1.24M</div><div class="l">facts loaded</div></div>
-            <div class="fig"><div class="v">5,944</div><div class="l">companies</div></div>
-            <div class="fig"><div class="v">7</div><div class="l">quarters</div></div>
-            <div class="fig"><div class="v">78.6% → 99.9%</div><div class="l">identity pass</div></div>
+            <div class="fig"><div class="v">6,224</div><div class="l">companies covered</div></div>
+            <div class="fig"><div class="v">4,912</div><div class="l">reconcile directly</div></div>
+            <div class="fig"><div class="v">215</div><div class="l">flagged with a reason</div></div>
+            <div class="fig"><div class="v">0</div><div class="l">hidden</div></div>
           </div>
           <div class="chips"><span class="chip">FastAPI</span><span class="chip">PostgreSQL</span><span class="chip">SQLAlchemy</span><span class="chip">Railway</span></div>
         </article>
